@@ -12,19 +12,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install uv
 RUN pip install uv
 
-# Copy pyproject.toml (better caching)
-COPY pyproject.toml .
+# Copy pyproject.toml and uv.lock (better caching)
+COPY pyproject.toml uv.lock ./
 
 # Install Python dependencies with uv
 RUN uv pip install -r pyproject.toml
 
-# Copy application code and model artifacts
-COPY app.py .
-COPY iris_model.joblib .
-COPY label_encoder.joblib .
+# Copy application code, scripts, and data
+COPY src ./src
+COPY main.py .
+COPY data ./data
+COPY iris_model.joblib label_encoder.joblib ./
+
+# Copy .env.example for reference
+COPY .env.example .
 
 # Expose FastAPI port
 EXPOSE 8000
 
 # Start the API server
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "main.py"]

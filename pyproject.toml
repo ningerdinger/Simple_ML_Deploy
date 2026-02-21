@@ -10,4 +10,19 @@ dependencies = [
     "pandas",
     "numpy",
     "joblib",
+    "python-dotenv",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "ruff",
+    "mypy",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+

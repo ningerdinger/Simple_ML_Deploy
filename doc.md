@@ -12,13 +12,26 @@ This project implements a machine learning pipeline that:
 ## Project Structure
 
 ```
-├── iris.csv              # Iris dataset
-├── train_model.py        # Model training script
-├── app.py                # FastAPI application
-├── pyproject.toml        # Project configuration and dependencies (uv)
-├── Dockerfile            # Docker configuration
-└── iris_model.joblib     # Trained model (generated)
-└── label_encoder.joblib  # Label encoder (generated)
+├── src/                        # Source code package
+│   ├── __init__.py             # Package initializer
+│   ├── app.py                  # FastAPI application
+│   ├── train_model.py          # Model training module
+│   └── config.py               # Configuration management
+├── data/                       # Data directory
+│   └── iris.csv                # Iris dataset
+├── scripts/                    # Utility scripts
+│   ├── train.py                # Training script
+│   └── run.py                  # API server script
+├── tests/                      # Test suite
+│   ├── conftest.py             # Pytest configuration
+│   └── test_api.py             # API tests
+├── main.py                     # Main entry point
+├── pyproject.toml              # Project configuration and dependencies (uv)
+├── .env.example                # Environment variables template
+├── Dockerfile                  # Docker configuration
+├── uv.lock                     # Dependency lock file
+├── iris_model.joblib           # Trained model (generated)
+└── label_encoder.joblib        # Label encoder (generated)
 ```
 
 ## Requirements
@@ -38,9 +51,16 @@ This project implements a machine learning pipeline that:
 python -m uv sync
 ```
 
+2. (Optional) Set up environment variables:
+```bash
+cp .env.example .env
+# Edit .env as needed
+```
+
 This command will:
 - Create a virtual environment (`.venv`)
 - Resolve and install all dependencies from `pyproject.toml`
+- Install development dependencies with `python -m uv sync --extra dev`
 
 ## Usage
 
@@ -48,24 +68,80 @@ This command will:
 
 Run the training script to train and save the classification models:
 ```bash
-python train_model.py
+python scripts/train.py
+```
+
+Or use the training module directly:
+```bash
+python -m src.train_model
 ```
 
 This will:
-- Load the Iris dataset from `iris.csv`
-- Train Decision Tree and Random Forest classifiers
-- Save the trained model and label encoder as joblib files
+- Load the Iris dataset from `data/iris.csv`
+- Train a Random Forest classifier
+- Save the trained model and label encoder to the project root
 
 ### Running the API
 
-Start the FastAPI server:
+Start the FastAPI server using the main entry point:
 ```bash
-python -m uvicorn app:app --reload
+python main.py
+```
+
+Or use the script:
+```bash
+python scripts/run.py
+```
+
+Or directly with uvicorn:
+```bash
+python -m uvicorn src.app:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The server will start on `http://127.0.0.1:8000`
 
-### API Endpoints
+### Testing
+
+Run the test suite using pytest:
+```bash
+pytest
+```
+
+Run with coverage:
+```bash
+pytest --cov=src
+```
+
+## Code Quality
+
+Format code with black:
+```bash
+black src tests
+```
+
+Lint with ruff:
+```bash
+ruff check src tests
+```
+
+Type check with mypy:
+```bash
+mypy src
+```
+
+## Environment Configuration
+
+Create a `.env` file from the template:
+```bash
+cp .env.example .env
+```
+
+Available environment variables:
+- `API_HOST`: API server host (default: `0.0.0.0`)
+- `API_PORT`: API server port (default: `8000`)
+- `LOG_LEVEL`: Logging level (default: `INFO`)
+
+## API Endpoints
 
 #### GET /
 Returns a simple status message:
