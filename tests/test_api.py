@@ -1,16 +1,12 @@
 """Tests for the Iris Classifier API."""
-from fastapi.testclient import TestClient
-from src.app import app
 
-client = TestClient(app)
-
-def test_root():
+def test_root(client):
     """Test root endpoint."""
     response = client.get("/")
     assert response.status_code == 200
     assert "message" in response.json()
 
-def test_predict():
+def test_predict(client):
     """Test predict endpoint."""
     payload = {
         "SepalLengthCm": 5.1,
@@ -24,7 +20,7 @@ def test_predict():
     prediction = response.json()["prediction"]
     assert prediction in ["Iris-setosa", "Iris-versicolor", "Iris-virginica"]
 
-def test_predict_invalid():
+def test_predict_invalid(client):
     """Test predict with invalid input."""
     payload = {"SepalLengthCm": "invalid"}
     response = client.post("/predict", json=payload)
