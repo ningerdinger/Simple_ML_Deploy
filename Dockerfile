@@ -15,8 +15,8 @@ RUN pip install uv
 # Copy pyproject.toml and uv.lock (better caching)
 COPY pyproject.toml uv.lock ./
 
-# Install Python dependencies with uv
-RUN uv pip install -r pyproject.toml
+# Create virtual environment and install Python dependencies with uv
+RUN uv venv && uv pip install --system -r pyproject.toml
 
 # Copy application code, scripts, and data
 COPY src ./src

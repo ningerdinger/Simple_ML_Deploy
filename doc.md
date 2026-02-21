@@ -175,29 +175,51 @@ Once the server is running, access the interactive API documentation:
 
 ## Docker
 
-Build and run with Docker:
-```bash
-docker build -t iris-classifier .
-docker run -p 8000:8000 iris-classifier
-```
+### Building the Image
 
-The Dockerfile uses `uv` for fast, reliable dependency installation from `pyproject.toml`.
-
-### Complete Docker Workflow
-
-Follow these steps to build and test the containerized application:
-
-**Step 1: Build the Docker Image**
+Build the Docker image with the Iris classifier:
 ```bash
 docker build -t iris-classifier .
 ```
 
-This command reads the Dockerfile and creates an image named `iris-classifier` with all dependencies installed.
+### Running the Container
 
-**Step 2: Run the Container**
+Start the containerized API server:
 ```bash
 docker run -p 8000:8000 iris-classifier
 ```
+
+This maps port 8000 from the container to your localhost, making the API accessible at `http://localhost:8000`.
+
+The container automatically:
+- Installs all dependencies using `uv` for speed and reliability
+- Creates a virtual environment
+- Runs the API server on `0.0.0.0:8000`
+- Uses the pre-trained models (`iris_model.joblib`, `label_encoder.joblib`)
+
+### Testing the Docker Container
+
+Once the container is running, test the API:
+
+**Using PowerShell:**
+```powershell
+$body = '{"SepalLengthCm": 5.1, "SepalWidthCm": 3.5, "PetalLengthCm": 1.4, "PetalWidthCm": 0.2}'; Invoke-WebRequest -Uri "http://localhost:8000/predict" -Method POST -Headers @{"Content-Type"="application/json"} -Body $body | Select-Object -ExpandProperty Content
+```
+
+**Using curl:**
+```bash
+curl -X POST "http://localhost:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "SepalLengthCm": 5.1,
+    "SepalWidthCm": 3.5,
+    "PetalLengthCm": 1.4,
+    "PetalWidthCm": 0.2
+  }'
+```
+
+**Interactive API:**
+Open your browser to `http://localhost:8000/docs` for the Swagger UI or `http://localhost:8000/redoc` for ReDoc.
 
 This starts the container and maps port 8000 from the container to your localhost, making the API accessible at `http://localhost:8000`.
 
