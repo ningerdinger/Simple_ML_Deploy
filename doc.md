@@ -15,7 +15,7 @@ This project implements a machine learning pipeline that:
 ├── iris.csv              # Iris dataset
 ├── train_model.py        # Model training script
 ├── app.py                # FastAPI application
-├── requirements.txt      # Python dependencies
+├── pyproject.toml        # Project configuration and dependencies (uv)
 ├── Dockerfile            # Docker configuration
 └── iris_model.joblib     # Trained model (generated)
 └── label_encoder.joblib  # Label encoder (generated)
@@ -33,10 +33,14 @@ This project implements a machine learning pipeline that:
 
 ## Installation
 
-1. Install dependencies:
+1. Install dependencies using uv:
 ```bash
-pip install -r requirements.txt
+python -m uv sync
 ```
+
+This command will:
+- Create a virtual environment (`.venv`)
+- Resolve and install all dependencies from `pyproject.toml`
 
 ## Usage
 
@@ -100,6 +104,8 @@ Build and run with Docker:
 docker build -t iris-classifier .
 docker run -p 8000:8000 iris-classifier
 ```
+
+The Dockerfile uses `uv` for fast, reliable dependency installation from `pyproject.toml`.
 
 ### Complete Docker Workflow
 
